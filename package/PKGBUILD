@@ -5,7 +5,7 @@
 
 # Maintainer: Your Name <devel@lasath.org>
 pkgname=kargos-script-next-event
-pkgver=1.0
+pkgver=1.1
 pkgrel=1
 pkgdesc="My Kargos script to display the next event in an iCal file"
 arch=('any')

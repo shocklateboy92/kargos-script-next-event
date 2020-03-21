@@ -41,16 +41,20 @@ namespace NextEvent
             Logger.Log(string.Join('\n',
                 orderEvents.Select(e => $"{e.Period.StartTime}: {((CalendarEvent) e.Source).Summary}")));
 
-            if (orderEvents.Count == 0)
+            var message = "";
+            if (orderEvents.Count > 0)
             {
-                Logger.Log("No events within 24h");
-                return;
+                var nextEvent = (CalendarEvent) orderEvents.First().Source;
+                var nextOccurence = orderEvents.First().Period.StartTime;
+                message = $"{nextOccurence.Value:HH:mm} {nextEvent.Summary}";
+            }
+            else
+            {
+                message = "No events within 24h";
             }
 
-            var nextEvent = (CalendarEvent) orderEvents.First().Source;
-            var nextOccurence = orderEvents.First().Period.StartTime;
             Console.WriteLine(
-                $"{nextOccurence.Value:HH:mm} {nextEvent.Summary} | iconName=view-calendar");
+                $"{message} | iconName=view-calendar");
         }
     }
 }

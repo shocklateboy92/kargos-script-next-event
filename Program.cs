@@ -32,15 +32,14 @@ namespace NextEvent
             Logger.Log($"Getting events from {time.ToString(CultureInfo.CurrentCulture)}");
 
             var cal = Calendar.Load(await response.Content.ReadAsStreamAsync());
-            var events = cal.Calendar.GetOccurrences(time, time + TimeSpan.FromDays(1))
-                .Select(e => (CalendarEvent) e.Source);
+            var events = cal.Calendar.GetOccurrences(time, time + TimeSpan.FromDays(1));
 
             var orderEvents = events
-                .Where(f => f.Start.Value.TimeOfDay > time.TimeOfDay)
-                .OrderBy(f => f.Start.Value.TimeOfDay)
+                .Where(f => !((CalendarEvent) f.Source).IsAllDay)
+                .OrderBy(f => f.Period.StartTime)
                 .ToList();
             Logger.Log(string.Join('\n',
-                orderEvents.Select(e => $"{e.Start.Value.TimeOfDay}: {e.Summary}")));
+                orderEvents.Select(e => $"{e.Period.StartTime}: {((CalendarEvent) e.Source).Summary}")));
 
             if (orderEvents.Count == 0)
             {
@@ -48,9 +47,10 @@ namespace NextEvent
                 return;
             }
 
-            var nextEvent = orderEvents.First();
+            var nextEvent = (CalendarEvent) orderEvents.First().Source;
+            var nextOccurence = orderEvents.First().Period.StartTime;
             Console.WriteLine(
-                $"{nextEvent.Start.Value:HH:mm} {nextEvent.Summary} | iconName=view-calendar");
+                $"{nextOccurence:HH:mm} {nextEvent.Summary} | iconName=view-calendar");
         }
     }
 }

@@ -50,7 +50,7 @@ namespace NextEvent
             var nextEvent = (CalendarEvent) orderEvents.First().Source;
             var nextOccurence = orderEvents.First().Period.StartTime;
             Console.WriteLine(
-                $"{nextOccurence:HH:mm} {nextEvent.Summary} | iconName=view-calendar");
+                $"{nextOccurence.Value:HH:mm} {nextEvent.Summary} | iconName=view-calendar");
         }
     }
 }

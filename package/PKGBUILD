@@ -12,7 +12,7 @@ arch=('any')
 url="https://github.com/shocklateboy92/kargos-script-next-event"
 license=('MIT')
 groups=('kargos')
-depends=('dotnet-runtime', 'dotnet-runtime')
+depends=('dotnet-runtime' 'dotnet-runtime')
 makedepends=('dotnet-sdk')
 checkdepends=()
 optdepends=()
@@ -28,20 +28,29 @@ noextract=()
 md5sums=()
 validpgpkeys=()
 
-build() {
-    dotnet publish --configuration=Release
-}
-
 install_file() { 
     mkdir -p "$2";
-    cp "$1" "$2/";
+    if [ -d "$1" ] ; then
+        cp -rT "$1" "$2/";
+    else
+        cp "$1" "$2/";
+    fi
+}
+
+go_to_root() {
+    cd "../..";
+}
+
+build() {
+    go_to_root;
+    dotnet publish --configuration=Release
 }
 
 package() {
     destdir="${pkgdir}/usr/local";
-    cd ../../;
+    go_to_root;
 
-    install_file "./dist/pr-notify.js" "${destdir}/lib/dotnet/next-event";
-    install_file "./src/kargos-script.next-event.300s.sh" "$destdir/bin";
+    install_file "./bin/Release/netcoreapp3.1/publish" "${destdir}/lib/dotnet/next-event";
+    install_file "./kargos-script.next-event.5m.sh" "$destdir/bin";
 }
 

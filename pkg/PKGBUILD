@@ -1,0 +1,47 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <devel@lasath.org>
+pkgname=kargos-script-next-event
+pkgver=1.0
+pkgrel=1
+pkgdesc="My Kargos script to display the next event in an iCal file"
+arch=('any')
+url="https://github.com/shocklateboy92/kargos-script-next-event"
+license=('MIT')
+groups=('kargos')
+depends=('dotnet-runtime', 'dotnet-runtime')
+makedepends=('dotnet-sdk')
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=()
+noextract=()
+md5sums=()
+validpgpkeys=()
+
+build() {
+    dotnet publish --configuration=Release
+}
+
+install_file() { 
+    mkdir -p "$2";
+    cp "$1" "$2/";
+}
+
+package() {
+    destdir="${pkgdir}/usr/local";
+    cd ../../;
+
+    install_file "./dist/pr-notify.js" "${destdir}/lib/dotnet/next-event";
+    install_file "./src/kargos-script.next-event.300s.sh" "$destdir/bin";
+}
+

@@ -36,14 +36,21 @@ namespace NextEvent
 
             var orderEvents = events
                 .Where(f => !((CalendarEvent) f.Source).IsAllDay)
-                .OrderBy(f => f.Period.StartTime)
+                .OrderBy(f => f.Period.StartTime.Value)
                 .ToList();
             Logger.Log(string.Join('\n',
-                orderEvents.Select(e => $"{e.Period.StartTime}: {((CalendarEvent) e.Source).Summary}")));
+                orderEvents.Select(e => $"{e.Period.StartTime.Value}: {((CalendarEvent) e.Source).Summary}")));
 
             var message = "";
             if (orderEvents.Count > 0)
             {
+                // Push out already started events if we have more 
+                if (orderEvents.Count > 1 &&
+                    orderEvents.First().Period.StartTime.Value < (time - TimeSpan.FromMinutes(10)))
+                {
+                    orderEvents.RemoveAt(0);
+                }
+
                 var nextEvent = (CalendarEvent) orderEvents.First().Source;
                 var nextOccurence = orderEvents.First().Period.StartTime;
                 message = $"{nextOccurence.Value:HH:mm} {nextEvent.Summary}";
@@ -51,6 +58,11 @@ namespace NextEvent
             else
             {
                 message = "No events within 24h";
+            }
+
+            if (message.Length > 30)
+            {
+                message = message.Substring(0, 28) + "...";
             }
 
             Console.WriteLine(
